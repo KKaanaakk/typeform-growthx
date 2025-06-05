@@ -14,7 +14,6 @@ export function BaseQuestion({
   title,
   description,
   isActive,
-  onSubmit,
   children,
 }: BaseQuestionProps) {
   if (!isActive) return null;

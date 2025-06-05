@@ -5,7 +5,7 @@ import { ProgressBar } from "./progress-bar/ProgressBar";
 import { WelcomeQuestion } from "./question-types/WelcomeQuestion";
 import { TextQuestion } from "./question-types/TextQuestion";
 import { EmailQuestion } from "./question-types/EmailQuestion";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { FormData } from "@/app/types/form";
 import { SubmitQuestion } from "./question-types/SubmitQuestion";
 import { SelectQuestion } from "./question-types/SelectQuestion";

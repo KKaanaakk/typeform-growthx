@@ -175,6 +175,7 @@ export function FormProvider({ children }: { children: ReactNode }) {
         }));
       }
     } catch (error) {
+      console.error("Form submission error:", error);
       setNavigation((prev) => ({
         ...prev,
         isSubmitting: false,
