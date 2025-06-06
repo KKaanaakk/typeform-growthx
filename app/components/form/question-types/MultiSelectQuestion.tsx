@@ -14,11 +14,25 @@ interface MultiSelectQuestionProps {
   onSubmit: () => void;
 }
 
+const FOUNDER_OPTIONS = [
+  "Structure approach to growth",
+  "Build growth team",
+  "Connect with like minded people",
+];
+
+const OTHER_OPTIONS = [
+  "Get hired",
+  "Get promoted",
+  "Connect with like minded people",
+  "Structured approach to growth",
+  "Build growth",
+];
+
 export function MultiSelectQuestion({
   id,
   title,
   description,
-  options,
+  options: defaultOptions,
   isActive,
   onSubmit,
 }: MultiSelectQuestionProps) {
@@ -30,7 +44,20 @@ export function MultiSelectQuestion({
     trigger,
     setValue,
     clearErrors,
+    getValues,
   } = form;
+
+  // Get the previous role selection
+  const professionalRole =
+    id === "careerGoals" ? getValues("professionalGoals")?.[0] : null;
+
+  // Determine which options to show
+  const options =
+    id === "careerGoals"
+      ? professionalRole === "Founder"
+        ? FOUNDER_OPTIONS
+        : OTHER_OPTIONS
+      : defaultOptions;
 
   useEffect(() => {
     if (isActive) {
@@ -94,10 +121,10 @@ export function MultiSelectQuestion({
               key={option}
               onClick={() => handleSelect(option)}
               onKeyDown={(e) => handleKeyDown(e, option)}
-              className={`w-full text-left p-4 rounded-lg transition-colors ${
+              className={`w-full text-left p-4 rounded-lg transition-colors border border-[#fafafa] ${
                 selectedOptions.includes(option)
-                  ? "bg-blue-100 hover:bg-blue-200"
-                  : "bg-gray-50 hover:bg-gray-100"
+                  ? "bg-white/10 hover:bg-white/10"
+                  : "bg-black hover:bg-white/10"
               }`}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -128,7 +155,7 @@ export function MultiSelectQuestion({
                     </svg>
                   )}
                 </div>
-                <span>{option}</span>
+                <span className="text-white">{option}</span>
               </div>
             </motion.button>
           ))}

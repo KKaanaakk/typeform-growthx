@@ -73,34 +73,36 @@ export function TextQuestion({
       isActive={isActive}
       onSubmit={handleSubmit}
     >
-      <div className="space-y-4">
+      <div className="w-full flex flex-col">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
+          className="w-full flex flex-col"
         >
-          <input
-            ref={(e) => {
-              ref(e);
-              if (inputRef.current === null) {
-                inputRef.current = e;
-              }
-            }}
-            name={name}
-            onChange={(e) => {
-              onChange(e);
-              if (showError) {
-                // Clear error when user starts typing after an error
-                setShowError(false);
-                clearErrors(id);
-              }
-            }}
-            onBlur={onBlur}
-            type="text"
-            className="w-full bg-transparent border-b-2 border-gray-300 focus:border-blue-600 outline-none py-2 text-xl transition-colors"
-            placeholder="Type your answer here..."
-            onKeyDown={handleKeyDown}
-          />
+          <div className="w-full">
+            <input
+              ref={(e) => {
+                ref(e);
+                if (inputRef.current === null) {
+                  inputRef.current = e;
+                }
+              }}
+              name={name}
+              onChange={(e) => {
+                onChange(e);
+                if (showError) {
+                  setShowError(false);
+                  clearErrors(id);
+                }
+              }}
+              onBlur={onBlur}
+              type="text"
+              className="w-full bg-transparent border-b-2 border-gray-300 focus:border-blue-600 outline-none py-2 text-xl transition-colors text-white"
+              placeholder="Type your answer here..."
+              onKeyDown={handleKeyDown}
+            />
+          </div>
           {showError && (
             <motion.p
               initial={{ opacity: 0 }}

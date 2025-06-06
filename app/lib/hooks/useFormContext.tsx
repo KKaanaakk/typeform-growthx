@@ -51,9 +51,9 @@ export function FormProvider({ children }: { children: ReactNode }) {
     {
       id: "welcome",
       type: "welcome",
-      title: "Welcome to GrowthX",
+      title: "Up-skilling requires time commitment",
       description:
-        "We're excited to learn more about you and your business. This short form will help us understand how we can best support your growth journey.",
+        "The GrowthX experience is designed by keeping in mind the working hours founders & full time operators typically work in.",
     },
     {
       id: "name",

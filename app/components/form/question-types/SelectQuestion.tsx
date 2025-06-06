@@ -24,13 +24,14 @@ export function SelectQuestion({
 }: SelectQuestionProps) {
   const { form } = useFormContext();
   const [showError, setShowError] = useState(false);
-  const selectRef = useRef<HTMLSelectElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const selectRef = useRef<HTMLDivElement>(null);
+  const [selectedValue, setSelectedValue] = useState<string>("");
   const {
     formState: { errors },
     trigger,
     setValue,
     clearErrors,
-    getValues,
   } = form;
 
   useEffect(() => {
@@ -41,13 +42,14 @@ export function SelectQuestion({
     }
   }, [isActive, clearErrors, id]);
 
-  const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
+  const handleSelect = async (value: string) => {
+    setSelectedValue(value);
     setValue(id, value);
+    setIsOpen(false);
     setShowError(false);
     clearErrors(id);
 
-    if (value && value !== "default") {
+    if (value) {
       const isValid = await trigger(id);
       if (isValid) {
         onSubmit();
@@ -55,18 +57,16 @@ export function SelectQuestion({
     }
   };
 
-  const handleKeyDown = async (e: React.KeyboardEvent<HTMLSelectElement>) => {
+  const handleKeyDown = async (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      const value = getValues(id);
-      if (!value || value === "default") {
-        setShowError(true);
-        return;
-      }
-
-      const isValid = await trigger(id);
-      if (isValid) {
-        onSubmit();
+      if (selectedValue) {
+        const isValid = await trigger(id);
+        if (isValid) {
+          onSubmit();
+        } else {
+          setShowError(true);
+        }
       } else {
         setShowError(true);
       }
@@ -80,32 +80,24 @@ export function SelectQuestion({
       isActive={isActive}
       onSubmit={() => {}}
     >
-      <div className="space-y-4">
+      <div className="w-full flex flex-col space-y-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="relative"
+          className="w-full relative"
         >
-          <select
+          <div
             ref={selectRef}
-            onChange={handleChange}
+            tabIndex={0}
             onKeyDown={handleKeyDown}
-            className="w-full bg-transparent border-b-2 border-gray-300 focus:border-blue-600 outline-none py-2 text-xl transition-colors appearance-none cursor-pointer"
-            defaultValue="default"
+            onClick={() => setIsOpen(!isOpen)}
+            className="w-full bg-transparent border-b-2 border-gray-700 focus:border-blue-600 outline-none py-2 text-xl transition-colors text-gray-400 cursor-pointer relative flex items-center justify-between"
           >
-            <option value="default" disabled>
-              Choose your industry...
-            </option>
-            {options.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-            <svg
-              className="w-5 h-5 text-gray-400"
+            <span>{selectedValue || "Type or select an option"}</span>
+            <motion.svg
+              animate={{ rotate: isOpen ? 180 : 0 }}
+              className="w-6 h-6 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -116,8 +108,31 @@ export function SelectQuestion({
                 strokeWidth={2}
                 d="M19 9l-7 7-7-7"
               />
-            </svg>
+            </motion.svg>
           </div>
+
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="absolute left-0 right-0 mt-2 bg-[#1a1a1a] rounded-lg overflow-hidden shadow-lg z-50 max-h-[300px] overflow-y-auto"
+            >
+              {options.map((option, index) => (
+                <motion.div
+                  key={option}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  onClick={() => handleSelect(option)}
+                  className="px-4 py-3 text-white hover:bg-[#333333] cursor-pointer transition-colors"
+                >
+                  {option}
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+
           {showError && errors[id] && (
             <motion.p
               initial={{ opacity: 0 }}
@@ -135,7 +150,7 @@ export function SelectQuestion({
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          Select an option or press Enter ↵ to continue
+          Press Enter ↵ to continue
         </motion.p>
       </div>
     </BaseQuestion>
